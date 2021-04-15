@@ -159,35 +159,7 @@ void loop() {
     wait = true;                                  // Set Wait to true as it's now going to be the turn of the player
     inputTime = millis();                         // Store the time to measure the player's response time
   
-  }else if(curLen==8){
-    // Print a winner message on lcd.
-    lcd.clear();
-    lcd.print("WINNER WINNER!!!");
-    lcd.setCursor(0, 1);
-    lcd.print("CHICKEN DINNER!!");
-    // Play a jolly good tune for the winner.
-    for (int thisNote = 0; thisNote < 8; thisNote++) {
-      // to calculate the note duration, take one second divided by the note type.
-      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-      int noteDuration = 1000 / noteDurations[thisNote];
-      tone(11, melody[thisNote], noteDuration);
-      // to distinguish the notes, set a minimum time between them.
-      // the note's duration + 30% seems to work well:
-      int pauseBetweenNotes = noteDuration * 1.30;
-      delay(pauseBetweenNotes);
-      // stop the tone playing:
-      noTone(11);
-    }
-    // Make swervo move like crazy.
-    myservo.write(90);// move servos to center position -> 90°
-    delay(500);
-    myservo.write(30);// move servos to center position -> 60°
-    delay(500);
-    myservo.write(90);// move servos to center position -> 90°
-    delay(500);
-    myservo.write(150);// move servos to center position -> 120°
-
-  }else{ 
+  }else if(curLen < 8){ 
                             //***************//
                             // Player's turn //
                             //***************//
@@ -240,5 +212,33 @@ void loop() {
         }
       }
     }    
+  }else{
+    // Print a winner message on lcd.
+    lcd.clear();
+    lcd.print("WINNER WINNER!!!");
+    lcd.setCursor(0, 1);
+    lcd.print("CHICKEN DINNER!!");
+    // Play a jolly good tune for the winner.
+    for (int thisNote = 0; thisNote < 8; thisNote++) {
+      // to calculate the note duration, take one second divided by the note type.
+      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+      int noteDuration = 1000 / noteDurations[thisNote];
+      tone(11, melody[thisNote], noteDuration);
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.30;
+      delay(pauseBetweenNotes);
+      // stop the tone playing:
+      noTone(11);
+    }
+    // Make swervo move like crazy.
+    myservo.write(90);// move servos to center position -> 90°
+    delay(500);
+    myservo.write(30);// move servos to center position -> 60°
+    delay(500);
+    myservo.write(90);// move servos to center position -> 90°
+    delay(500);
+    myservo.write(150);// move servos to center position -> 120°
+
   }
 }
