@@ -136,7 +136,7 @@ void DoLoseProcess(){
 /// Where the magic happens
 ///
 void loop() {  
-  if(!wait){      
+  if(!wait && curLen < 8){      
                             //****************//
                             // Arduino's turn //
                             //****************//
