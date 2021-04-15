@@ -6,6 +6,7 @@ LiquidCrystal lcd(42, 44, 46, 48, 50, 52); // initialize the library with the nu
 Servo myservo;
 byte sequence[100];           // Storage for the light sequence
 byte curLen = 0;              // Current length of the sequence
+byte winLen = 3;              // Max times to play the game
 byte inputCount = 0;          // The number of times that the player has pressed a (correct) button in a given turn 
 byte lastInput = 0;           // Last input from the player
 byte expRd = 0;               // The LED that's suppose to be lit by the player
@@ -136,7 +137,7 @@ void DoLoseProcess(){
 /// Where the magic happens
 ///
 void loop() {  
-  if(!wait && curLen < 8){      
+  if(!wait){      
                             //****************//
                             // Arduino's turn //
                             //****************//
@@ -159,7 +160,7 @@ void loop() {
     wait = true;                                  // Set Wait to true as it's now going to be the turn of the player
     inputTime = millis();                         // Store the time to measure the player's response time
   
-  }else if(curLen < 8){ 
+  }else if(curLen <= winLen){ 
                             //***************//
                             // Player's turn //
                             //***************//
@@ -208,11 +209,15 @@ void loop() {
             wait = false;                           // If so, this will make the next turn the program's turn
             inputCount = 0;                         // Reset the number of times that the player has pressed a button
             delay(1500);
+            if(curLen == winLen){
+                curLen++;
+                wait = true;
+            }
+            }
           }
         }
       }
-    }    
-  }else{
+    }else{
     // Print a winner message on lcd.
     lcd.clear();
     lcd.print("WINNER WINNER!!!");
