@@ -13,7 +13,7 @@ LiquidCrystal lcd(42, 44, 46, 48, 50, 52); // initialize the library with the nu
 Servo myservo;
 byte sequence[100];           // Storage for the light sequence
 byte curLen = 0;              // Current length of the sequence
-byte winLen = 3;              // Max times to play the game
+byte winLen = 9;              // Number of times to play before winning the game
 byte inputCount = 0;          // The number of times that the player has pressed a (correct) button in a given turn 
 byte lastInput = 0;           // Last input from the player
 byte expRd = 0;               // The LED that's suppose to be lit by the player
@@ -133,6 +133,30 @@ void flash(short freq){
   }
 }
 
+void flash(short freq, int countDn){
+  lcd.setCursor(0, 1);
+  int printCt = countDn;
+  setPinDirection(OUTPUT); /// We're activating the LEDS now
+  for(int i = 0; i <= countDn; i++){
+    lcd.print(printCt);
+    // Also flash RGB LEDs red
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, LOW);
+    digitalWrite(RED2, HIGH);
+    digitalWrite(GREEN2, LOW);
+    digitalWrite(BLUE2, LOW);
+    writeAllPins(HIGH);
+    beep(50);
+    delay(freq);
+    digitalWrite(RED, LOW);
+    digitalWrite(RED2, LOW);
+    writeAllPins(LOW);
+    printCt--;
+    lcd.setCursor(0, 1);
+    delay(freq);
+  }
+}
 ///
 ///This function resets all the game variables to their default values
 ///
@@ -140,7 +164,7 @@ void Reset(){
   Display(0);
   lcd.clear();
   lcd.print("GET READY!!");// Print a message to the LCD.
-  myservo.write(90);// move servos to center position -> 90°
+  myservo.write(115);// move servos to center position -> 90°
   //Reset RGB LEDs back to blue
   digitalWrite(RED, LOW);
   digitalWrite(GREEN, LOW);
@@ -148,7 +172,7 @@ void Reset(){
   digitalWrite(RED2, LOW);
   digitalWrite(GREEN2, LOW);
   digitalWrite(BLUE2, HIGH);
-  flash(500);
+  flash(500, 5);
   curLen = 0;
   inputCount = 0;
   lastInput = 0;
@@ -156,6 +180,7 @@ void Reset(){
   btnDwn = false;
   wait = false;
   resetFlag = false;
+  candy = true;
 }
 
 ///
@@ -200,7 +225,8 @@ void DoLoseProcess(){
 ///
 /// Where the magic happens
 ///
-void loop() {  
+void loop() {
+  int servoDelay = 100; //Delay between swervo moves
   if(!wait){      
                             //****************//
                             // Arduino's turn //
@@ -208,6 +234,7 @@ void loop() {
     lcd.clear();
     lcd.print("PAY ATTENTION!");
     // Change RGB led to red
+    delay(1000);
     digitalWrite(RED, HIGH);
     digitalWrite(GREEN, LOW);
     digitalWrite(BLUE, LOW);
@@ -381,14 +408,31 @@ void loop() {
 
     // Make swervo move like crazy.
     if(candy){
-      myservo.write(90);// move servos to center position -> 90°
-      delay(500);
-      myservo.write(30);// move servos to center position -> 60°
-      delay(500);
-      myservo.write(90);// move servos to center position -> 90°
-      delay(500);
-      myservo.write(150);// move servos to center position -> 120°
+      myservo.write(100);// move servos to center position -> 90°
+      delay(servoDelay);
+      myservo.write(115);// move servos to center position -> 60°
+      delay(servoDelay);
+      myservo.write(100);// move servos to center position -> 90°
+      delay(servoDelay);
+      myservo.write(115);// move servos to center position -> 120°
+      delay(servoDelay);
+      myservo.write(100);// move servos to center position -> 90°
+      delay(servoDelay);
+      myservo.write(115);// move servos to center position -> 60°
+      delay(servoDelay);
+      myservo.write(100);// move servos to center position -> 90°
+      delay(servoDelay);
+      myservo.write(115);// move servos to center position -> 120°
+      delay(servoDelay);
+      myservo.write(100);// move servos to center position -> 90°
+      delay(servoDelay);
+      myservo.write(115);// move servos to center position -> 120°
       candy = false;
     }
+    delay(500);
+    lcd.clear();
+    lcd.print("STARTING GAME IN");
+    flash(250, 9);
+    Reset();
   }
 }
