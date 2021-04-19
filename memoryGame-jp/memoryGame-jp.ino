@@ -13,7 +13,7 @@ LiquidCrystal lcd(42, 44, 46, 48, 50, 52); // initialize the library with the nu
 Servo myservo;
 byte sequence[100];           // Storage for the light sequence
 byte curLen = 0;              // Current length of the sequence
-byte winLen = 9;              // Number of times to play before winning the game
+byte winLen = 10;              // Number of successful rounds before winning the game
 byte inputCount = 0;          // The number of times that the player has pressed a (correct) button in a given turn 
 byte lastInput = 0;           // Last input from the player
 byte expRd = 0;               // The LED that's suppose to be lit by the player
@@ -164,8 +164,8 @@ void Reset(){
   Display(0);
   lcd.clear();
   lcd.print("GET READY!!");// Print a message to the LCD.
-  myservo.write(115);// move servos to center position -> 90°
-  //Reset RGB LEDs back to blue
+  myservo.write(116);// Move servo to home position.
+  //Reset RGB LEDs back to start color
   digitalWrite(RED, LOW);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, HIGH);
@@ -226,7 +226,6 @@ void DoLoseProcess(){
 /// Where the magic happens
 ///
 void loop() {
-  int servoDelay = 100; //Delay between swervo moves
   if(!wait){      
                             //****************//
                             // Arduino's turn //
@@ -342,96 +341,22 @@ void loop() {
       // stop the tone playing:
       noTone(11);
     }
-    // RGB LED stuff start
-    #define delayTime 1 // fading time between colors
-    
-    redValue = 255; // choose a value between 1 and 255 to change the color.
-    greenValue = 0;
-    blueValue = 0;
-    
-    // this is unnecessary as we've either turned on RED in SETUP
-    // or in the previous loop ... regardless, this turns RED off
-    // analogWrite(RED, 0);
-    // delay(1000);
-    
-    for(int i = 0; i < 255; i += 1) // fades out red bring green full when i=255
-    {
-    redValue -= 1;
-    greenValue += 1;
-    // The following was reversed, counting in the wrong directions
-    // analogWrite(RED, 255 - redValue);
-    // analogWrite(GREEN, 255 - greenValue);
-    analogWrite(RED, redValue);
-    analogWrite(GREEN, greenValue);
-    analogWrite(RED2, redValue);
-    analogWrite(GREEN2, greenValue);
-    delay(delayTime);
-    }
-    
-    redValue = 0;
-    greenValue = 255;
-    blueValue = 0;
-    
-    for(int i = 0; i < 255; i += 1) // fades out green bring blue full when i=255
-    {
-    greenValue -= 1;
-    blueValue += 1;
-    // The following was reversed, counting in the wrong directions
-    // analogWrite(GREEN, 255 - greenValue);
-    // analogWrite(BLUE, 255 - blueValue);
-    analogWrite(GREEN, greenValue);
-    analogWrite(BLUE, blueValue);
-    analogWrite(GREEN2, greenValue);
-    analogWrite(BLUE2, blueValue);
-    delay(delayTime);
-    }
-    
-    redValue = 0;
-    greenValue = 0;
-    blueValue = 255;
-    
-    for(int i = 0; i < 255; i += 1) // fades out blue bring red full when i=255
-    {
-    // The following code has been rearranged to match the other two similar sections
-    blueValue -= 1;
-    redValue += 1;
-    // The following was reversed, counting in the wrong directions
-    // analogWrite(BLUE, 255 - blueValue);
-    // analogWrite(RED, 255 - redValue);
-    analogWrite(BLUE, blueValue);
-    analogWrite(RED, redValue);
-    analogWrite(BLUE2, blueValue);
-    analogWrite(RED2, redValue);
-    delay(delayTime);
-    }
-    // RGB LED stuff end
 
-    // Make swervo move like crazy.
+    // Dispense candy!!
     if(candy){
-      myservo.write(100);// move servos to center position -> 90°
+      int servoDelay = 200; //Delay between swervo moves, lower numbers shoots out candy faster but may jam more.
+      int candyCount = 5; //Number of candys to dispense on win
+      for(int i = 0; i < candyCount; i ++) { // 
+      myservo.write(100);
       delay(servoDelay);
-      myservo.write(115);// move servos to center position -> 60°
-      delay(servoDelay);
-      myservo.write(100);// move servos to center position -> 90°
-      delay(servoDelay);
-      myservo.write(115);// move servos to center position -> 120°
-      delay(servoDelay);
-      myservo.write(100);// move servos to center position -> 90°
-      delay(servoDelay);
-      myservo.write(115);// move servos to center position -> 60°
-      delay(servoDelay);
-      myservo.write(100);// move servos to center position -> 90°
-      delay(servoDelay);
-      myservo.write(115);// move servos to center position -> 120°
-      delay(servoDelay);
-      myservo.write(100);// move servos to center position -> 90°
-      delay(servoDelay);
-      myservo.write(115);// move servos to center position -> 120°
+      myservo.write(116);
+      delay(servoDelay);  
+      }
       candy = false;
     }
     delay(500);
     lcd.clear();
-    lcd.print("STARTING GAME IN");
+    lcd.print("RESTARTING IN:");
     flash(250, 9);
     Reset();
   }
