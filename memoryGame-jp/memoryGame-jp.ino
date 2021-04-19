@@ -69,6 +69,12 @@ void setup() {
   digitalWrite(RED2, LOW);
   digitalWrite(GREEN2, LOW);
   digitalWrite(BLUE2, HIGH);
+  // Print Simons name for all to know
+  lcd.clear();
+  lcd.print("SIMON SAYS");// Print a message to the LCD.
+  lcd.setCursor(0, 1);
+  lcd.print("SNACK!!!");// Print a message to the LCD.
+  delay(3000);
   //Run the reset thingy right off the bat
   Reset();
 }
